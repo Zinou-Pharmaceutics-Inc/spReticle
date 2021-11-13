@@ -17,7 +17,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
-    - name: Get Devkit
+    - name: Get dependencies
+      run: sudo apt-get install -y freeglut3-dev
+    
+    - name: Get devkit
       run: wget -O devkit.tgz https://autodesk-adn-transfer.s3.us-west-2.amazonaws.com/ADN%20Extranet/M%26E/Maya/devkit%202020/Autodesk_Maya_2020_4_Update_DEVKIT_Linux.tgz &&
            tar -xf devkit.tgz
 
