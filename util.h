@@ -39,8 +39,7 @@
 //
 //
 
-#ifndef spReticle_util_h
-#define spReticle_util_h
+#pragma once
 
 #include <maya/MColor.h>
 #include <maya/MString.h>
@@ -63,7 +62,7 @@ public:
     int    displayMode;
     int    displaySafeAction;
     int    displaySafeTitle;
-    
+
     Geom   aspectGeom;
     Geom   safeActionGeom;
     Geom   safeTitleGeom;
@@ -95,7 +94,7 @@ public:
     int    displayProjGate;
     int    displaySafeAction;
     int    displaySafeTitle;
-    
+
     Geom   filmbackGeom;
     Geom   imageGeom;
     Geom   projGeom;
@@ -111,7 +110,7 @@ public:
     double padAmountX;
     double padAmountY;
     int    displayMode;
-    
+
     Geom   padGeom;
 };
 
@@ -152,5 +151,3 @@ public:
     bool    textBold;
     bool    textScale;
 };
-
-#endif

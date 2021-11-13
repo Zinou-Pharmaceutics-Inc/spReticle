@@ -39,10 +39,7 @@
 //
 //
 
-#ifndef spReticle_V2Renderer_h
-#define spReticle_V2Renderer_h
-
-#if (MAYA_API_VERSION >= 201400)        
+#pragma once
 
 #include <iostream>
 #include <maya/MViewport2Renderer.h>
@@ -60,29 +57,26 @@ class V2Renderer : public GPURenderer
 
         // Set the draw manager
         void setDrawManager(MHWRender::MUIDrawManager* drawManager);
-    
+
         void prepareForDraw(float portWidth, float portHeight);
         void postDraw();
-    
+
         // Given two Geom instances, this renders the mask area between them.
         virtual void drawMask( Geom g1, Geom g2, MColor color, bool sides, bool top );
-        
+
         // This draws a single line between the specified points.
         virtual void drawLine(double x1, double x2, double y1, double y2,
                               MColor color, bool stipple);
-        
+
         // Given a Geom instance, this will draw a line connecting the points.
         // The argument side determines whether the sides will be drawn (the top
         // will always be drawn). The stipple argument specifies whether the line
         // should be solid or dashed/stippled.
         virtual void drawLines( Geom g, MColor color, bool sides, bool stipple);
-        
+
         // This function is responsible for rendering text.
         virtual void drawText(TextData *td, double tx, double ty);
-    
+
     private:
         MHWRender::MUIDrawManager* drawManager;
 };
-
-#endif
-#endif

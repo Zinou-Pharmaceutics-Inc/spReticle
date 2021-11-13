@@ -80,7 +80,6 @@
 #include <maya/MFileObject.h>
 #include <maya/MFnMessageAttribute.h>
 
-#if (MAYA_API_VERSION>=201200)
 // Viewport 2.0 includes
 #include <maya/MDrawRegistry.h>
 #include <maya/MPxDrawOverride.h>
@@ -88,7 +87,6 @@
 #include <maya/MDrawContext.h>
 #include <maya/MGlobal.h>
 #include <maya/MSelectionList.h>
-#endif
 
 #include "spReticleLoc.h"
 
@@ -106,10 +104,8 @@
 
 MTypeId spReticleLoc::id( 0x00000502 );
 
-#if (MAYA_API_VERSION>=201200)
-	MString	spReticleLoc::drawDbClassification("drawdb/geometry/spReticleLoc");
-	MString	spReticleLoc::drawRegistrantId("spReticleLoc");
-#endif
+MString	spReticleLoc::drawDbClassification("drawdb/geometry/spReticleLoc");
+MString	spReticleLoc::drawRegistrantId("spReticleLoc");
 
 MObject spReticleLoc::DrawingEnabled;
 MObject spReticleLoc::EnableTextDrawing;
@@ -446,11 +442,11 @@ MStatus spReticleLoc::getFilmbackData()
     //Get whether to display the film gate
     p = MPlug( thisNode, DisplayFilmGate );
     McheckStatus ( p.getValue ( filmback.displayFilmGate  ), "spReticleLoc::getFilmbackData get displayFilmGate");
-    
+
     //Get the filmback mask color
     stat = getColor( FilmGateMaskColor, FilmGateMaskTrans, filmback.filmbackGeom.maskColor );
     McheckStatus ( stat, "spReticleLoc::getFilmbackData get filmGateMaskColor");
-    
+
     //Get the filmback line color
     stat = getColor( FilmGateLineColor, FilmGateLineTrans, filmback.filmbackGeom.lineColor );
     McheckStatus ( stat, "spReticleLoc::getFilmbackData get filmGateLineColor");
@@ -718,13 +714,13 @@ MStatus spReticleLoc::getTextChildren(MPlug tPlug, TextData & td)
 
     p = tPlug.child( 10 , &stat );
     McheckStatus( p.getValue( td.textBold ), "spReticleLoc::getTextChildren - textBold" );
-        
+
     p = tPlug.child( 11 , &stat );
     McheckStatus( p.getValue( td.textSize ), "spReticleLoc::getTextChildren - textSize" );
-        
+
     p = tPlug.child( 12 , &stat );
     McheckStatus( p.getValue( td.textScale ), "spReticleLoc::getTextChildren - textScale" );
-        
+
     p = tPlug.child( 13 , &stat );
     McheckStatus( p.getValue( td.textVAlign ), "spReticleLoc::getTextChildren - textVAlign" );
 
@@ -800,11 +796,11 @@ MStatus spReticleLoc::getOptions()
         // Display crosshair option;
         p = MPlug ( thisNode, DisplayCrosshair );
         McheckStatus ( p.getValue ( options.displayCrosshair  ), "spReticleLoc::getOptions displayCrosshair");
-        
+
         // Display crosshair option;
         p = MPlug ( thisNode, DisplayFieldGuide );
         McheckStatus ( p.getValue ( options.displayFieldGuide  ), "spReticleLoc::getOptions displayFieldGuide");
-        
+
         // Text Color;
         stat = getColor (MiscTextColor, MiscTextTrans, options.textColor );
         McheckStatus ( stat, "spReticleLoc::getOptions textColor");
@@ -901,14 +897,12 @@ void spReticleLoc::calcFilmbackGeom()
     double panY = 0.0;
     double zoom = 1.0;
 
-#if MAYA_API_VERSION >= 201100
     if (camera.panZoomEnabled() && !camera.renderPanZoom())
     {
         zoom = camera.zoom();
         panX = camera.horizontalPan();
         panY = camera.verticalPan();
     }
-#endif
 
     double pixelScale = 1.0;
 
@@ -953,15 +947,15 @@ void spReticleLoc::calcFilmbackGeom()
     // Calculate the filmback width and height
     filmback.filmbackGeom.x = filmback.horizontalFilmAperture * pixelScaleX;
     filmback.filmbackGeom.y = filmback.verticalFilmAperture * pixelScale;
-    
-    // Calculate the actual filmback geometry corner values    
+
+    // Calculate the actual filmback geometry corner values
     filmback.filmbackGeom.x1 = portGeom.x - (filmback.filmbackGeom.x / 2);
     filmback.filmbackGeom.x2 = portGeom.x + (filmback.filmbackGeom.x / 2);
     filmback.filmbackGeom.y1 = portGeom.y - (filmback.filmbackGeom.y / 2);
     filmback.filmbackGeom.y2 = portGeom.y + (filmback.filmbackGeom.y / 2);
     filmback.filmbackGeom.isValid = true;
 
-    // Set the image area to match the filmback    
+    // Set the image area to match the filmback
     filmback.imageGeom = filmback.filmbackGeom;
     filmback.horizontalImageAperture	= filmback.horizontalFilmAperture;
     filmback.verticalImageAperture		= filmback.verticalFilmAperture;
@@ -995,15 +989,15 @@ void spReticleLoc::calcFilmbackGeom()
     // Calculate the image area width & height
     filmback.imageGeom.x = filmback.horizontalImageAperture * pixelScaleX;
     filmback.imageGeom.y = filmback.verticalImageAperture * pixelScale;
-    
-    // Calculate the actual filmback geometry corner values    
+
+    // Calculate the actual filmback geometry corner values
     filmback.imageGeom.x1 = (portGeom.x + imageOffsetX) - (filmback.imageGeom.x / 2.0f);
     filmback.imageGeom.x2 = (portGeom.x + imageOffsetX) + (filmback.imageGeom.x / 2.0f);
     filmback.imageGeom.y1 = portGeom.y - (filmback.imageGeom.y / 2.0f);
     filmback.imageGeom.y2 = portGeom.y + (filmback.imageGeom.y / 2.0f);
     filmback.imageGeom.isValid = true;
 
-    // reset safe action/title    
+    // reset safe action/title
     filmback.safeActionGeom.isValid = false;
     filmback.safeTitleGeom.isValid = false;
 }
@@ -1099,16 +1093,16 @@ void spReticleLoc::calcAspectGeom( Aspect_Ratio & ar )
 
 // This calculates the PanScan Geom instances.
 //
-void spReticleLoc::calcPanScanGeom( PanScan & ps )
+void spReticleLoc::calcPanScanGeom(PanScan& ps)
 {
-    //Calculate the aspect ratio of the filmback to later determine the fit of the pan/scan area    
-    float aspectRatio = filmback.horizontalImageAperture / filmback.verticalImageAperture;
-    
-    //If the aspect ratio of the pan/scan area is not set, use the filmback's aspect ratio    
+    //Calculate the aspect ratio of the filmback to later determine the fit of the pan/scan area
+    float aspectRatio = static_cast<float>(filmback.horizontalImageAperture / filmback.verticalImageAperture);
+
+    //If the aspect ratio of the pan/scan area is not set, use the filmback's aspect ratio
     if (ps.aspectRatio < 0)
         ps.aspectRatio = aspectRatio;
 
-    //Determine the fit of the pan/scan & pan/scan area against the filmback    
+    //Determine the fit of the pan/scan & pan/scan area against the filmback
     if (ps.aspectRatio > aspectRatio && ps.panScanRatio < ps.aspectRatio)
     {
         ps.aspectGeom.y = (filmback.imageGeom.x / camera.lensSqueezeRatio()) / ps.aspectRatio;
@@ -1124,7 +1118,7 @@ void spReticleLoc::calcPanScanGeom( PanScan & ps )
         ps.aspectGeom.y = filmback.imageGeom.y;
         ps.aspectGeom.x = ps.aspectGeom.y * ps.panScanRatio;
     }
-    
+
     //Adjust for lens squeeze
     ps.aspectGeom.x *= camera.lensSqueezeRatio();
 
@@ -1158,7 +1152,7 @@ bool spReticleLoc::setInternalValueInContext(const  MPlug & plug,
 bool spReticleLoc::calcDynamicText(TextData *td, const int i)
 {
     char buff[255];
-    
+
     switch (td->textType)
     {
         case 0:						//String
@@ -1166,7 +1160,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
         case 1:						//Lens
             if (td->textStr == "")
                 td->textStr = MString("%1.2f mm");
-            
+
             sprintf(buff,td->textStr.asChar(),camera.focalLength() );
             td->textStr = MString(buff);
             break;
@@ -1188,17 +1182,17 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
                 MString cmd = "connectAttr time1.o "+p.name();
                 MGlobal::executeCommand(cmd);
             }
-            
+
             MStatus status = p.getValue(time);
             if (!status)
             {
                 status.perror("spReticleLoc::calcDynamicText get time");
                 return false;
             }
-            
+
             if (td->textStr == "")
                 td->textStr = MString("%04.0f");
-            
+
             sprintf(buff,td->textStr.asChar(),time.value() );
             td->textStr = MString(buff);
             break;
@@ -1211,10 +1205,10 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
                 MGlobal::displayError( name() + " invalid text level (" + level + ") for text item " + i);
                 return false;
             }
-            
+
             if (td->textStr == "")
                 td->textStr = MString("%1.3f");
-            
+
             sprintf(buff,td->textStr.asChar(),ars[level].aspectRatio );
             td->textStr = MString(buff);
             break;
@@ -1222,10 +1216,10 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
         case 5:						//Maximum Distance
             if (options.maximumDistance <= 0)
                 return false;
-            
+
             if (td->textStr == "")
                 td->textStr = MString("max. dist %1.0f");
-            
+
             //textColor = (maximumDist >= options.maximumDistance) ? MColor(1,1,1,0) : textColor;
             sprintf(buff, td->textStr.asChar(), maximumDist );
             td->textStr = MString(buff);
@@ -1234,12 +1228,12 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
         {
             if (!filmback.displayProjGate)
                 return false;
-            
+
             double aspectRatio = (filmback.horizontalProjectionGate/filmback.verticalProjectionGate);
-            
+
             if (td->textStr == "")
                 td->textStr = MString("%1.3f");
-            
+
             sprintf(buff, td->textStr.asChar(), aspectRatio);
             td->textStr = MString(buff);
             break;
@@ -1248,7 +1242,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
         {
             if (td->textStr == "")
                 td->textStr = MString("%s");
-            
+
             sprintf(buff, td->textStr.asChar(), getenv(SHOW_ENV_VAR));
             td->textStr = MString(buff);
             break;
@@ -1257,7 +1251,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
         {
             if (td->textStr == "")
                 td->textStr = MString("%s");
-            
+
             sprintf(buff, td->textStr.asChar(),  getenv(SHOT_ENV_VAR));
             td->textStr = MString(buff);
             break;
@@ -1266,7 +1260,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
         {
             if (td->textStr == "")
                 td->textStr = MString("%s/%s");
-            
+
             sprintf(buff, td->textStr.asChar(), getenv(SHOW_ENV_VAR),getenv(SHOT_ENV_VAR));
             td->textStr = MString(buff);
             break;
@@ -1275,7 +1269,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
         {
             if (td->textStr == "")
                 td->textStr = MString("%s");
-            
+
             sprintf(buff, td->textStr.asChar(),  getenv(FRAME_START_ENV_VAR));
             td->textStr = MString(buff);
             break;
@@ -1284,7 +1278,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
         {
             if (td->textStr == "")
                 td->textStr = MString("%s");
-            
+
             sprintf(buff, td->textStr.asChar(),  getenv(FRAME_END_ENV_VAR));
             td->textStr = MString(buff);
             break;
@@ -1293,7 +1287,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
         {
             if (td->textStr == "")
                 td->textStr = MString("%s-%s");
-            
+
             sprintf(buff, td->textStr.asChar(), getenv(FRAME_START_ENV_VAR), getenv(FRAME_END_ENV_VAR));
             td->textStr = MString(buff);
             break;
@@ -1302,7 +1296,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
         {
             if (td->textStr == "")
                 td->textStr = MString("%s");
-            
+
             sprintf(buff, td->textStr.asChar(), getenv("USER"));
             td->textStr = MString(buff);
             break;
@@ -1311,7 +1305,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
         {
             if (td->textStr == "")
                 td->textStr = MString("%s");
-            
+
             sprintf(buff, td->textStr.asChar(), MFileIO::currentFile().asChar() );
             td->textStr = MString(buff);
             break;
@@ -1320,7 +1314,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
         {
             if (td->textStr == "")
                 td->textStr = MString("%s");
-            
+
             MFileObject fo;
             fo.setFullName(MFileIO::currentFile());
             sprintf(buff, td->textStr.asChar(), fo.path().asChar() );
@@ -1331,7 +1325,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
         {
             if (td->textStr == "")
                 td->textStr = MString("%s");
-            
+
             MFileObject fo;
             fo.setFullName(MFileIO::currentFile());
             sprintf(buff, td->textStr.asChar(), fo.name().asChar() );
@@ -1341,14 +1335,14 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
         case 17:						//Pan Scan Aspect Ratio
             if (td->textStr == "")
                 td->textStr = MString("%1.2f");
-            
+
             sprintf(buff, td->textStr.asChar(), panScan.panScanRatio );
             td->textStr = MString(buff);
             break;
         case 18:						//Pan Scan Offset
             if (td->textStr == "")
                 td->textStr = MString("%1.2f");
-            
+
             sprintf(buff, td->textStr.asChar(), panScan.panScanOffset );
             td->textStr = MString(buff);
             break;
@@ -1364,7 +1358,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
             MGlobal::displayError( name() + " invalid text type for text item " + i);
             return false;
     }
-    
+
     return true;
 }
 
@@ -1414,10 +1408,10 @@ bool spReticleLoc::getTextLevelGeometry(TextData *td, Geom &g, const int i)
                     MGlobal::displayError( name() + " invalid aspect ratio level (" + td->textARLevel + ") for text item " + i);
                     return false;
                 }
-                
+
                 if (!ars[level].aspectGeom.isValid)
                     return false;
-                
+
                 switch (td->textType)
                 {
                     case 19:
@@ -1440,7 +1434,7 @@ bool spReticleLoc::getTextLevelGeometry(TextData *td, Geom &g, const int i)
             {
                 if (!panScan.aspectGeom.isValid)
                     calcPanScanGeom( panScan );
-                
+
                 switch (td->textType)
                 {
                     case 19:
@@ -1463,7 +1457,7 @@ bool spReticleLoc::getTextLevelGeometry(TextData *td, Geom &g, const int i)
             MGlobal::displayError( name() + " invalid text anchor for text item " + i);
             break;
     }
-    
+
     return true;
 }
 
@@ -1511,7 +1505,7 @@ bool spReticleLoc::calcTextPosition(TextData *td, const Geom &g, double &x, doub
             MGlobal::displayError( name() + " invalid text relative position (" + td->textPosRel + ") for text item " + i);
             return false;
     }
-    
+
     return true;
 }
 
@@ -1574,8 +1568,15 @@ bool spReticleLoc::prepForDraw(const MObject & node, const MDagPath & path, cons
         MString tag;
         p = MPlug ( thisNode, Tag );
         McheckStatus ( p.getValue ( tag  ), "spReticleLoc::draw get tag");
-        
-        MString cmd = "if (exists(\"" SOURCE_MEL_METHOD "\")) "SOURCE_MEL_METHOD"(\""+path.partialPathName()+"\",\""+tag+"\")";
+
+        MString cmd = "if (exists(\"";
+        cmd += SOURCE_MEL_METHOD;
+        cmd += "\")) ";
+        cmd += SOURCE_MEL_METHOD;
+        cmd += "(\""+path.partialPathName();
+        cmd += "\",\"";
+        cmd += tag;
+        cmd += "\")";
         MGlobal::executeCommand(cmd);
         loadDefault = false;
     }
@@ -1593,7 +1594,7 @@ bool spReticleLoc::prepForDraw(const MObject & node, const MDagPath & path, cons
     camera.setObject( cameraPath );
 
     // If camera is orthographic, then return
-    if (camera.isOrtho()) 
+    if (camera.isOrtho())
         return false;
 
     //Default value to false
@@ -1631,7 +1632,7 @@ bool spReticleLoc::prepForDraw(const MObject & node, const MDagPath & path, cons
         case 2:
         {
             MPlug cameras(thisNode, Cameras);
-        
+
             MPlugArray cameraPlugs;
 
             MObject cameraObj = camera.object();
@@ -1718,7 +1719,7 @@ bool spReticleLoc::prepForDraw(const MObject & node, const MDagPath & path, cons
         // Reset need refresh
         needRefresh = false;
     }
-	
+
 	return true;
 }
 
@@ -1726,9 +1727,9 @@ bool spReticleLoc::prepForDraw(const MObject & node, const MDagPath & path, cons
 //
 void spReticleLoc::drawBase(int width, int height, GPURenderer* renderer)
 {
-	portWidth = double(width);
-	portHeight = double(height);
-	
+	portWidth = static_cast<double>(width);
+	portHeight = static_cast<double>(height);
+
     // Calculate the port geometry
     calcPortGeom();
 
@@ -1760,13 +1761,16 @@ void spReticleLoc::drawBase(int width, int height, GPURenderer* renderer)
             calcAspectGeom( ars[i] );
         }
     }
-    
+
     // Set the filmback for the renderer
     renderer->setFilmback(&filmback);
 
     // Get everything setup for rendering
-    renderer->prepareForDraw(portWidth, portHeight);
-    
+    renderer->prepareForDraw(
+        static_cast<float>(portWidth),
+        static_cast<float>(portHeight)
+    );
+
     // create variable to store what the first geometry object to draw aspect ratios to
     Geom aspectContainerGeom = portGeom;
     Geom filmbackGeom = filmback.filmbackGeom;
@@ -1780,10 +1784,10 @@ void spReticleLoc::drawBase(int width, int height, GPURenderer* renderer)
             renderer->drawMask(aspectContainerGeom, filmbackGeom, filmback.filmbackGeom.maskColor, 1);
             aspectContainerGeom = filmback.filmbackGeom;
         }
-        
+
         // Draw filmback Line
         renderer->drawLines(filmback.filmbackGeom, filmback.filmbackGeom.lineColor, 1, filmback.displayFilmGate == 2);
-        
+
         // Draw Sound Area Line
         if ( filmback.soundTrackWidth > EPSILON )
             renderer->drawLine(filmback.imageGeom.x1, filmback.imageGeom.x1, filmback.imageGeom.y1, filmback.imageGeom.y2, filmback.imageGeom.lineColor, 0 );
@@ -1796,7 +1800,7 @@ void spReticleLoc::drawBase(int width, int height, GPURenderer* renderer)
             renderer->drawMask(aspectContainerGeom, pad.padGeom, pad.padGeom.maskColor, true);
         aspectContainerGeom = pad.padGeom;
     }
-    
+
     // Draw all the aspectRatios
 
     // Draw the masks first
@@ -1824,16 +1828,16 @@ void spReticleLoc::drawBase(int width, int height, GPURenderer* renderer)
             }
             //drawMask(g, ar.aspectGeom, maskColor, (i == 0 && !(pad.usePad && pad.isPadded)) );
             renderer->drawMask(g, ar.aspectGeom, maskColor, i == 0);
-            
+
             if ( ar.displaySafeAction == 3 )
             {
-                float sf = (ar.displaySafeTitle == 3) ? 0.66 : 0.5;
+                float sf = (ar.displaySafeTitle == 3) ? 0.66f : 0.5f;
                 MColor c = MColor(maskColor.r,maskColor.g,maskColor.b,1+((maskColor.a-1) * sf));
                 renderer->drawMask(ar.aspectGeom,ar.safeActionGeom,c,true);
             }
             if ( ar.displaySafeTitle == 3 )
             {
-                float sf = (panScan.displaySafeAction == 3) ? 0.33 : 0.5;
+                float sf = (panScan.displaySafeAction == 3) ? 0.33f : 0.5f;
                 MColor c = MColor(maskColor.r,maskColor.g,maskColor.b,1+((maskColor.a-1) * sf));
                 if ( ar.displaySafeAction == 3 )
                     renderer->drawMask(ar.safeActionGeom,ar.safeTitleGeom,c,true);
@@ -1868,27 +1872,27 @@ void spReticleLoc::drawBase(int width, int height, GPURenderer* renderer)
         if (panScan.displayMode == 2)
         {
             renderer->drawMask(filmback.imageGeom, panScan.aspectGeom, panScan.aspectGeom.maskColor, true, false );
-            
+
             Geom g = panScan.aspectGeom;
-            
+
             if ( panScan.displaySafeAction == 3 )
             {
-                float sf = (panScan.displaySafeTitle == 3) ? 0.66 : 0.5;
+                float sf = (panScan.displaySafeTitle == 3) ? 0.66f : 0.5f;
                 MColor c = MColor(panScan.aspectGeom.maskColor.r,panScan.aspectGeom.maskColor.g,panScan.aspectGeom.maskColor.b,1+((panScan.aspectGeom.maskColor.a-1) * sf));
                 renderer->drawMask(panScan.aspectGeom,panScan.safeActionGeom, c, true );
                 g = panScan.safeActionGeom;
             }
-            
+
             if ( panScan.displaySafeTitle == 3 )
             {
-                float sf = (panScan.displaySafeAction == 3) ? 0.33 : 0.5;
+                float sf = (panScan.displaySafeAction == 3) ? 0.33f : 0.5f;
                 MColor c = MColor(panScan.aspectGeom.maskColor.r,panScan.aspectGeom.maskColor.g,panScan.aspectGeom.maskColor.b,1+((panScan.aspectGeom.maskColor.a-1) * sf));
                 renderer->drawMask(g,panScan.safeTitleGeom, c, true );
             }
         }
-        
+
         renderer->drawLines(panScan.aspectGeom, panScan.aspectGeom.lineColor, 1, 0);
-        
+
         // Draw safe action
         if (panScan.displaySafeAction)
         {
@@ -1907,7 +1911,7 @@ void spReticleLoc::drawBase(int width, int height, GPURenderer* renderer)
     {
         if ( filmback.displayProjGate == 3 )
             renderer->drawMask(filmback.filmbackGeom, filmback.projGeom, filmback.projGeom.maskColor, 1);
-        
+
         renderer->drawLines(filmback.projGeom, filmback.projGeom.lineColor, 1, filmback.displayProjGate == 2);
     }
 
@@ -1965,7 +1969,7 @@ void spReticleLoc::drawBase(int width, int height, GPURenderer* renderer)
         renderer->drawLine( cx, cx, portGeom.y-25, portGeom.y-5, options.lineColor, 0 );
         renderer->drawLine( cx, cx, portGeom.y+25, portGeom.y+5, options.lineColor, 0 );
     }
-    
+
     // Display Field Guide
     if ( options.displayFieldGuide)
     {
@@ -1977,7 +1981,7 @@ void spReticleLoc::drawBase(int width, int height, GPURenderer* renderer)
 
         double sx = (filmback.imageGeom.x / 2.0) / double(numLines+1);
         double sy = (filmback.imageGeom.y / 2.0) / double(numLines+1);
-        
+
         //If the filmback is not being drawn, then draw lines for it
         if ( !filmback.displayFilmGate )
             renderer->drawLines(filmback.filmbackGeom, options.lineColor, 1, 0);
@@ -1989,15 +1993,15 @@ void spReticleLoc::drawBase(int width, int height, GPURenderer* renderer)
             double lx = sx * i;
             double lx1 = filmback.imageGeom.x1 + lx;
             double lx2 = filmback.imageGeom.x2 - lx;
-            
+
             renderer->drawLine( lx1, lx1, filmback.imageGeom.y1, filmback.imageGeom.y2, options.lineColor, 0);
             renderer->drawLine( lx2, lx2, filmback.imageGeom.y1, filmback.imageGeom.y2, options.lineColor, 0);
-            
+
             //Draw vertical lines
             double ly = sy * i;
             double ly1 = filmback.imageGeom.y1 + ly;
             double ly2 = filmback.imageGeom.y2 - ly;
-            
+
             renderer->drawLine( filmback.imageGeom.x1, filmback.imageGeom.x2, ly1, ly1, options.lineColor, 0);
             renderer->drawLine( filmback.imageGeom.x1, filmback.imageGeom.x2, ly2, ly2, options.lineColor, 0);
         }
@@ -2005,7 +2009,7 @@ void spReticleLoc::drawBase(int width, int height, GPURenderer* renderer)
         //Draw center lines
         renderer->drawLine( cx, cx, filmback.imageGeom.y1, filmback.imageGeom.y2, options.lineColor, 0);
         renderer->drawLine( filmback.imageGeom.x1, filmback.imageGeom.x2, cy, cy, options.lineColor, 0);
-        
+
         //Draw Diagonal lines
         renderer->drawLine( filmback.imageGeom.x1, filmback.imageGeom.x2, filmback.imageGeom.y1, filmback.imageGeom.y2, options.lineColor, 0);
         renderer->drawLine( filmback.imageGeom.x1, filmback.imageGeom.x2, filmback.imageGeom.y2, filmback.imageGeom.y1, options.lineColor, 0);
@@ -2058,30 +2062,30 @@ void spReticleLoc::drawBase(int width, int height, GPURenderer* renderer)
 // This is the main function which draws the locator. It is called
 // by Maya whenever a 3D view needs to be refreshed.
 //
-void spReticleLoc::draw(M3dView & view, const MDagPath & path, 
-                         M3dView::DisplayStyle style,
-                         M3dView::DisplayStatus status)
-{
-    MStatus stat;
-    MPlug p;
+// void spReticleLoc::draw(M3dView & view, const MDagPath & path,
+//                          M3dView::DisplayStyle style,
+//                          M3dView::DisplayStatus status)
+// {
+//     MStatus stat;
+//     MPlug p;
 
-    // Get the dagPath, node and function set for the currently displaying camera
-    MDagPath cameraPath;
-    view.getCamera(cameraPath);
+//     // Get the dagPath, node and function set for the currently displaying camera
+//     MDagPath cameraPath;
+//     view.getCamera(cameraPath);
 
-    // Prep the data for drawing
-    if (!prepForDraw(thisMObject(), path, cameraPath))
-        return;
-	
-    // Get the view ready for drawing
-    view.beginGL();
+//     // Prep the data for drawing
+//     if (!prepForDraw(thisMObject(), path, cameraPath))
+//         return;
 
-    // Perform the draw
-    drawBase(view.portWidth(), view.portHeight(), &oglRenderer);
-	
-    // End of openGL calls
-    view.endGL();
-}
+//     // Get the view ready for drawing
+//     view.beginGL();
+
+//     // Perform the draw
+//     drawBase(view.portWidth(), view.portHeight(), &oglRenderer);
+
+//     // End of openGL calls
+//     view.endGL();
+// }
 
 // This function returns whether this locator should be effected by the
 // Display locators toggle in Maya. It is dependent upon the hideLocator
@@ -2111,13 +2115,6 @@ void spReticleLoc::postConstructor()
 {
     MStatus stat;
     MPlug p;
-
-    // Tell Maya to draw this in the transparent queue
-#if MAYA_API_VERSION < 850
-#ifndef WIN32
-    setTranspHandler( (TranspHandler)(&spReticleLoc::isTransparent) );
-#endif
-#endif
 
     // Load defaults
     loadDefault = SOURCE_MEL_SCRIPT;
@@ -2201,7 +2198,7 @@ MStatus spReticleLoc::initialize()
     SoundTrackWidth = nAttr.create( "soundTrackWidth", "stw", MFnNumericData::kFloat, 0.0, &stat );
     McheckStatus(stat,"create soundTrackWidth attribute");
     nAttr.setInternal(true);
-    
+
     DisplayFilmGate = eAttr.create( "displayFilmGate", "dfg", 0, &stat );
     McheckStatus(stat,"create displayFilmGate attribute");
     eAttr.addField("off", 0);
@@ -2209,7 +2206,7 @@ MStatus spReticleLoc::initialize()
     eAttr.addField("dashed lines", 2);
     eAttr.addField("Transparent Mask", 3);
     eAttr.setInternal(true);
-    
+
     HorizontalProjectionGate = nAttr.create( "horizontalProjectionGate", "hpg", MFnNumericData::kFloat, 0.825, &stat );
     McheckStatus(stat,"create horizontalProjectionGate attribute");
     nAttr.setInternal(true);
@@ -2220,7 +2217,7 @@ MStatus spReticleLoc::initialize()
 
     ProjectionGate = nAttr.create( "projectionGate", "pg", HorizontalProjectionGate, VerticalProjectionGate, MObject::kNullObj, &stat );
     nAttr.setDefault( 0.825, 0.446 );
-    
+
     DisplayProjectionGate = eAttr.create( "displayProjGate", "dpg", 0, &stat );
     McheckStatus(stat,"create displayProjGate attribute");
     eAttr.addField("off", 0);
@@ -2228,7 +2225,7 @@ MStatus spReticleLoc::initialize()
     eAttr.addField("dashed lines", 2);
     eAttr.addField("Transparent Mask", 3);
     eAttr.setInternal(true);
-    
+
     HorizontalSafeAction = nAttr.create( "horizontalSafeAction", "hsa", MFnNumericData::kFloat, 0.713, &stat );
     McheckStatus(stat,"create horizontalSafeAction attribute");
     nAttr.setInternal(true);
@@ -2607,11 +2604,8 @@ MStatus spReticleLoc::initialize()
     nAttr.setMax(1.0);
     nAttr.setInternal(true);
 
-#if MAYA_API_VERSION < 201100
-    HideLocator = nAttr.create( "hideLocator", "hl", MFnNumericData::kBoolean, false, &stat );
-#else
     HideLocator = nAttr.create( "hideLocator", "hloc", MFnNumericData::kBoolean, false, &stat );
-#endif
+
     McheckStatus(stat,"create hideLocator attribute");
     nAttr.setInternal(true);
 
@@ -2728,7 +2722,7 @@ MStatus spReticleLoc::initialize()
     tAttr.setHidden(true);
     tAttr.setConnectable(false);
     tAttr.setDefault(defaultTextAttr);
-    
+
     stat = addAttribute(EnableTextDrawing);
         McheckStatus(stat,"addAttribute enableTextDrawing");
     stat = addAttribute (DrawingEnabled);
@@ -2820,8 +2814,9 @@ MStatus spReticleLoc::initialize()
 //---------------------------------------------------------------------------
 // Viewport 2.0 override implementation
 //---------------------------------------------------------------------------
-#if (MAYA_API_VERSION>=201200)
-spReticleLocDrawOverride::spReticleLocDrawOverride(const MObject& obj) : MHWRender::MPxDrawOverride(obj, spReticleLocDrawOverride::draw)
+
+#define ALWAYS_DIRTY false
+spReticleLocDrawOverride::spReticleLocDrawOverride(const MObject& obj) : MHWRender::MPxDrawOverride(obj, nullptr, ALWAYS_DIRTY)
 {
 }
 
@@ -2829,21 +2824,12 @@ spReticleLocDrawOverride::~spReticleLocDrawOverride()
 {
 }
 
-#if (MAYA_API_VERSION>=201400 && USE_MUIDRAWMANAGER)
 MHWRender::DrawAPI spReticleLocDrawOverride::supportedDrawAPIs() const
 {
     // this plugin supports both GL and DX
-    return (MHWRender::kOpenGL | MHWRender::kDirectX11);
+    return MHWRender::kAllDevices;
 }
-#elif (MAYA_API_VERSION>=201300)
-MHWRender::DrawAPI spReticleLocDrawOverride::supportedDrawAPIs() const
-{
-    // this plugin supports OpenGL
-    return (MHWRender::kOpenGL);
-}
-#endif
 
-#if (MAYA_API_VERSION>=201300)
 bool spReticleLocDrawOverride::isBounded(const MDagPath& /*objPath*/,
                                       const MDagPath& /*cameraPath*/) const
 {
@@ -2854,7 +2840,6 @@ bool spReticleLocDrawOverride::disableInternalBoundingBoxDraw() const
 {
     return true;
 }
-#endif
 
 MBoundingBox spReticleLocDrawOverride::boundingBox( const MDagPath& objPath,const MDagPath& cameraPath ) const
 {
@@ -2862,18 +2847,11 @@ MBoundingBox spReticleLocDrawOverride::boundingBox( const MDagPath& objPath,cons
                         MPoint(1000000,1000000,1000000));
 }
 
-#if (MAYA_API_VERSION < 201400)
-MUserData* spReticleLocDrawOverride::prepareForDraw(
-                                                    const MDagPath& objPath,
-                                                    const MDagPath& cameraPath,
-                                                    MUserData* oldData)
-#else
 MUserData* spReticleLocDrawOverride::prepareForDraw(
                                   const MDagPath& objPath,
                                   const MDagPath& cameraPath,
                                   const MHWRender::MFrameContext& frameContext,
                                   MUserData* oldData)
-#endif
 {
     MObject obj = objPath.node();
     MFnDependencyNode node(obj);
@@ -2891,32 +2869,15 @@ MUserData* spReticleLocDrawOverride::prepareForDraw(
     return data;
 }
 
-#if (MAYA_API_VERSION < 201400)
-void spReticleLocDrawOverride::draw(const MHWRender::MDrawContext& context, const MUserData* data)
-{
-    int portWidth, portHeight;
-
-    context.getRenderTargetSize (portWidth, portHeight);
-
-    const spReticleLocData* drawData = static_cast<const spReticleLocData*>(data);
-    if (drawData)
-    {
-        if (drawData->draw)
-        {
-            drawData->reticle->drawBase(portWidth, portHeight, drawData->renderer);
-        }
-    }
-}
-#else
 bool spReticleLocDrawOverride::hasUIDrawables() const
 {
-    return USE_MUIDRAWMANAGER;
+    return true;
 }
+
 
 void spReticleLocDrawOverride::addUIDrawables( const MDagPath& objPath, MHWRender::MUIDrawManager& drawManager, const MHWRender::MFrameContext& frameContext, const MUserData* data )
 {
-#if (USE_MUIDRAWMANAGER)
-    //Get the view attributes that impact drawing
+    // Get the view attributes that impact drawing
     int oX,oy,portWidth,portHeight;
     frameContext.getViewportDimensions(oX,oy,portWidth,portHeight);
 
@@ -2929,29 +2890,7 @@ void spReticleLocDrawOverride::addUIDrawables( const MDagPath& objPath, MHWRende
             drawData->reticle->drawBase(portWidth, portHeight, &renderer);
         }
     }
-#endif
 }
-
-void spReticleLocDrawOverride::draw(const MHWRender::MDrawContext& context, const MUserData* data)
-{
-#if (!USE_MUIDRAWMANAGER)
-    int portWidth, portHeight;
-
-    context.getRenderTargetSize (portWidth, portHeight);
-
-    const spReticleLocData* drawData = static_cast<const spReticleLocData*>(data);
-    if (drawData)
-    {
-        if (drawData->draw)
-        {
-            drawData->reticle->drawBase(portWidth, portHeight, drawData->renderer);
-        }
-    }
-#endif
-}
-#endif
-
-#endif
 
 
 //---------------------------------------------------------------------------
@@ -2962,33 +2901,28 @@ MStatus initializePlugin(MObject obj)
 {
     MFnPlugin plugin(obj, "SPI", PLUGIN_VERSION, "Any");
 
-#if (MAYA_API_VERSION<201200)
-    MStatus status = plugin.registerNode( "spReticleLoc", spReticleLoc::id, 
-                         &spReticleLoc::creator, &spReticleLoc::initialize,
-                         MPxNode::kLocatorNode );
-#else
-    MStatus status = plugin.registerNode( "spReticleLoc", spReticleLoc::id, 
-                         &spReticleLoc::creator, &spReticleLoc::initialize,
-                         MPxNode::kLocatorNode,
-                         &spReticleLoc::drawDbClassification);
-#endif
+    MStatus status = plugin.registerNode(
+        "spReticleLoc", spReticleLoc::id,
+        &spReticleLoc::creator, &spReticleLoc::initialize,
+        MPxNode::kLocatorNode,
+        &spReticleLoc::drawDbClassification
+    );
+
     if (!status)
     {
         status.perror("registerNode");
         return status;
     }
 
-#if (MAYA_API_VERSION>=201200)
     status = MHWRender::MDrawRegistry::registerDrawOverrideCreator(
-    spReticleLoc::drawDbClassification,
-    spReticleLoc::drawRegistrantId,
-    spReticleLocDrawOverride::Creator);
+        spReticleLoc::drawDbClassification,
+        spReticleLoc::drawRegistrantId,
+        spReticleLocDrawOverride::Creator);
     if (!status)
     {
         status.perror("registerDrawOverrideCreator");
         return status;
     }
-#endif
 
 #if SOURCE_MEL_SCRIPT
     MGlobal::sourceFile(SOURCE_MEL_SCRIPT_PATH);
@@ -3002,7 +2936,6 @@ MStatus uninitializePlugin(MObject obj)
     MFnPlugin plugin( obj );
     MStatus status;
 
-#if (MAYA_API_VERSION>=201200)
     status = MHWRender::MDrawRegistry::deregisterDrawOverrideCreator(
         spReticleLoc::drawDbClassification,
         spReticleLoc::drawRegistrantId);
@@ -3011,7 +2944,6 @@ MStatus uninitializePlugin(MObject obj)
         status.perror("deregisterDrawOverrideCreator");
         return status;
     }
-#endif
 
     status = plugin.deregisterNode( spReticleLoc::id );
     if (!status)

@@ -39,10 +39,9 @@
 //
 //
 
-#ifndef spReticle_defines_h
-#define spReticle_defines_h
+#pragma once
 
-#define PLUGIN_VERSION          "2.0"
+#define PLUGIN_VERSION          "2.1"
 
 //  Epsilon value to use when testing for equality with floating values
 #define EPSILON                 0.0000001
@@ -68,11 +67,3 @@
 
 // Field Guide
 #define FIELDGUIDE_NUM_LINES    11
-
-// Specifies whether the VP2.0 MUIDrawManager class should be used for rendering vs OpenGL.
-// Currently, it has proper draw-order integration with image planes and support for DX11.
-// Cons are that it is slower, fonts are aliased, and line rendering is sometimes occluded by masks.
-// This only impacts Viewport 2.0.  Viewport 1.0 will use the OpenGLRenderer regardless.
-#define USE_MUIDRAWMANAGER      false 
-
-#endif
