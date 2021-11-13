@@ -34,21 +34,13 @@
 
 #include "defines.h"
 #include "util.h"
-#include "OpenGLRenderer.h"
-
-#if(MAYA_API_VERSION>=201400 && USE_MUIDRAWMANAGER)
 #include "V2Renderer.h"
-#endif
 
 class spReticleLoc : public MPxLocatorNode
 {
 public:
     spReticleLoc();
     virtual                 ~spReticleLoc();
-
-    virtual void            draw( M3dView & view, const MDagPath & path,
-                            M3dView::DisplayStyle style,
-                            M3dView::DisplayStatus status );
 
     virtual bool            setInternalValueInContext( const MPlug &,
                                                        const MDataHandle &,
@@ -66,7 +58,7 @@ public:
 
     // Get node ready for drawing
     bool                    prepForDraw(const MObject & thisNode, const MDagPath & path, const MDagPath & cameraPath);
-    
+
     // Base draw method
     void                    drawBase(int width, int height, GPURenderer* renderer);
 
@@ -228,15 +220,11 @@ private:
 
     std::vector<Aspect_Ratio> ars;
     std::vector<TextData>     text;
-
-    OpenGLRenderer oglRenderer;
 };
 
 //---------------------------------------------------------------------------
 // Viewport 2.0 override implementation
 //---------------------------------------------------------------------------
-#if (MAYA_API_VERSION>=201200)
-
 class spReticleLocData : public MUserData
 {
 public:
@@ -258,26 +246,18 @@ public:
 
     virtual ~spReticleLocDrawOverride();
 
-#if (MAYA_API_VERSION>=201300)
     virtual MHWRender::DrawAPI supportedDrawAPIs() const;
-    
-    virtual bool isBounded(
-                           const MDagPath& objPath,
+
+    virtual bool isBounded(const MDagPath& objPath,
                            const MDagPath& cameraPath) const;
-    
+
     virtual bool disableInternalBoundingBoxDraw() const;
-#endif
 
     virtual MBoundingBox boundingBox(
                                      const MDagPath& objPath,
-                                     const MDagPath& cameraPath) const;    
+                                     const MDagPath& cameraPath) const;
 
-#if (MAYA_API_VERSION<201400)
-    virtual MUserData* prepareForDraw(
-                                      const MDagPath& objPath,
-                                      const MDagPath& cameraPath,
-                                      MUserData* oldData);
-#else
+
     virtual MUserData* prepareForDraw(
                                       const MDagPath& objPath,
                                       const MDagPath& cameraPath,
@@ -291,7 +271,6 @@ public:
                                 MHWRender::MUIDrawManager& drawManager,
                                 const MHWRender::MFrameContext& frameContext,
                                 const MUserData* data);
-#endif
 
     static void draw(const MHWRender::MDrawContext& context, const MUserData* data);
 
@@ -299,11 +278,5 @@ private:
     spReticleLocDrawOverride(const MObject& obj);
     spReticleLocData* data;
 
-#if (MAYA_API_VERSION>=201400 && USE_MUIDRAWMANAGER)
     V2Renderer renderer;
-#else
-    OpenGLRenderer renderer;
-#endif
 };
-
-#endif

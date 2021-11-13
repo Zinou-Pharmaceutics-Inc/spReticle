@@ -39,8 +39,7 @@
 //
 //
 
-#ifndef spReticle_GPURenderer_h
-#define spReticle_GPURenderer_h
+#pragma once
 
 #include "util.h"
 
@@ -49,38 +48,36 @@ class GPURenderer
     public:
         GPURenderer();
         virtual ~GPURenderer() =0;
-    
+
         virtual void prepareForDraw(float portWidth, float portHeight) {};
         virtual void postDraw() {};
-    
+
         // Set the filmback
         virtual void setFilmback(Filmback* filmback);
-    
+
         // Given two Geom instances, this renders the mask area between them.
         virtual void drawMask( Geom g1, Geom g2, MColor color, bool sides, bool top=true ) =0;
-    
+
         // This draws a single line between the specified points.
         virtual void drawLine(double x1, double x2, double y1, double y2,
                               MColor color, bool stipple) =0;
-    
+
         // Given a Geom instance, this will draw a line connecting the points.
         // The argument side determines whether the sides will be drawn (the top
         // will always be drawn). The stipple argument specifies whether the line
         // should be solid or dashed/stippled.
         virtual void drawLines( Geom g, MColor color, bool sides, bool stipple) =0;
-    
+
         // This function is responsible for rendering text.
         virtual void drawText(TextData *td, double tx, double ty) =0;
-        
+
         // Make sure everything is ready for text drawing
         virtual void enableTextRendering() {};
-        
+
         // Turn off text rendering
         virtual void disableTextRendering() {};
-    
+
     protected:
         // The filmback of the camera
         Filmback *filmback;
 };
-
-#endif
