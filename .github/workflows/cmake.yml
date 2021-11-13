@@ -11,6 +11,7 @@ on:
   # This allows you to run this workflow manually from the GitHub "Actions" tab
   workflow_dispatch:
 
+jobs:
   maya-linux:
     runs-on: ubuntu-latest
 
@@ -19,8 +20,6 @@ on:
 
       matrix:
        include:
-         - maya: "2018.7" # For distribution
-           devkit: "https://autodesk-adn-transfer.s3.us-west-2.amazonaws.com/ADN%20Extranet/M%26E/Maya/devkit%202018/Autodesk_Maya_2018_7_Update_DEVKIT_Linux.tgz"
          - maya: "2019.3"
            devkit: "https://autodesk-adn-transfer.s3.us-west-2.amazonaws.com/ADN%20Extranet/M%26E/Maya/devkit%202019/Autodesk_Maya_2019_3_Update_DEVKIT_Linux.tgz"
          - maya: "2020.4"
@@ -35,7 +34,7 @@ on:
       - name: Setup Build Environment
         run: |
           yum-config-manager --add-repo=http://vault.centos.org/7.6.1810/sclo/x86_64/rh/
-          yum install devtoolset-6 bc -y --nogpgcheck
+          yum install mesa-libGL-devel mesa-libGLU-devel wget cmake devtoolset-6 bc -y --nogpgcheck
 
       - name: Devkit source
         run: |
@@ -43,16 +42,19 @@ on:
           wget ${{ matrix.devkit }} -O "$(pwd)/devkit.tgz"
           echo "Extracting devkit.tgz.."
           tar -xvf $(pwd)/devkit.tgz $pwd
+          ls
 
       # For the weird scl_source call below, see:
       # https://github.com/actions/virtual-environments/issues/1279
       - name: Build
         run: |
-          export DEVKIT_LOCATION=$(pwd)/devkitBase
           . scl_source enable devtoolset-6 || true
+          export DEVKIT_LOCATION=$(pwd)/devkitBase
           g++ --version
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-          cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install
+          mkdir build
+          cd build
+          EVKIT_LOCATION=$(pwd)/devkitBase cmake ..
+          cmake --build . --config Release --target install
 
       - name: Create distribution
         run: zip -r spReticle_linux_${{matrix.maya}}.zip ./install/*
