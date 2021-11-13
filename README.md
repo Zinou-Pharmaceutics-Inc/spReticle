@@ -50,12 +50,24 @@ tailor the spReticle to your environment.
 
 ### Usage
 
-In the Maya script editor, do this to create a maya-reticle.  Note that you might have to put in the abolute path to the plugin and MEL files:
+spReticle consists of 3 files relevant for use.
+
+1. `spReticleLoc.mll` goes into your `~/maya/2020/plug-ins` directory
+1. `spReticleLoc.mel` goes into your `~/maya/scripts` directory
+1. `AEspReticleLocTemplate.mel` goes into your `~/maya/scripts` directory
 
 ```py
 from maya import cmds
 cmds.loadPlugin("spReticleLoc")
 cmds.createNode("spReticleLoc")
+```
+
+Alternatively, you can load `spReticleLoc.mll` from your build-directory by also adding the `.mel` files to your script path.
+
+```py
+import os
+os.environ["MAYA_SCRIPT_PATH"] += os.pathsep + "C:\github\mottosso\spReticle"
+cmds.loadPlugin("spReticleLoc")
 ```
 
 <br>

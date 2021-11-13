@@ -17,15 +17,5 @@ set(LIBRARIES
      Foundation
 )
 
-if(MSVC)
-elseif(APPLE)
-else()
-    # From original Makefile, probably not necessary
-    set(CMAKE_CXX_FLAGS "-fPIC")
-    set(CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS} "-O3")
-    set(CMAKE_CXX_FLAGS_DEBUG "-g -gstabs+")
-endif()
-
-
 # Build plugin
 build_plugin()
