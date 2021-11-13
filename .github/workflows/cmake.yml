@@ -18,12 +18,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    
+
     - name: Get dependencies
       run: sudo bash -c 'sudo echo deb http://dk.archive.ubuntu.com/ubuntu/ bionic main universe >> /etc/apt/sources.list' &&
            sudo apt update &&
            sudo apt-get install -y freeglut3-dev g++-6
-    
+
     - name: Get devkit
       run: wget -O devkit.tgz https://autodesk-adn-transfer.s3.us-west-2.amazonaws.com/ADN%20Extranet/M%26E/Maya/devkit%202020/Autodesk_Maya_2020_4_Update_DEVKIT_Linux.tgz &&
            tar -xf devkit.tgz
@@ -32,5 +32,13 @@ jobs:
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build
-      # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: Create distribution
+      run: zip -r spReticle.zip ./install/*
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: spReticle.zip
