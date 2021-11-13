@@ -104,8 +104,8 @@
 
 MTypeId spReticleLoc::id( 0x00000502 );
 
-MString	spReticleLoc::drawDbClassification("drawdb/geometry/spReticleLoc");
-MString	spReticleLoc::drawRegistrantId("spReticleLoc");
+MString spReticleLoc::drawDbClassification("drawdb/geometry/spReticleLoc");
+MString spReticleLoc::drawRegistrantId("spReticleLoc");
 
 MObject spReticleLoc::DrawingEnabled;
 MObject spReticleLoc::EnableTextDrawing;
@@ -957,8 +957,8 @@ void spReticleLoc::calcFilmbackGeom()
 
     // Set the image area to match the filmback
     filmback.imageGeom = filmback.filmbackGeom;
-    filmback.horizontalImageAperture	= filmback.horizontalFilmAperture;
-    filmback.verticalImageAperture		= filmback.verticalFilmAperture;
+    filmback.horizontalImageAperture    = filmback.horizontalFilmAperture;
+    filmback.verticalImageAperture      = filmback.verticalFilmAperture;
 
     // Calculate the pad area width and height
     if (pad.usePad && pad.isPadded)
@@ -1155,16 +1155,16 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
 
     switch (td->textType)
     {
-        case 0:						//String
+        case 0:                     //String
             break;
-        case 1:						//Lens
+        case 1:                     //Lens
             if (td->textStr == "")
                 td->textStr = MString("%1.2f mm");
 
             sprintf(buff,td->textStr.asChar(),camera.focalLength() );
             td->textStr = MString(buff);
             break;
-        case 2:						//Camera
+        case 2:                     //Camera
             if (td->textStr == "")
                 td->textStr = camera.name();
             else
@@ -1173,7 +1173,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
                 td->textStr = MString(buff);
             }
             break;
-        case 3:						//Frame
+        case 3:                     //Frame
         {
             MTime time;
             MPlug p = MPlug ( thisNode, Time );
@@ -1197,7 +1197,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
             td->textStr = MString(buff);
             break;
         }
-        case 4:						//Aspect Ratio
+        case 4:                     //Aspect Ratio
         {
             int level = td->textARLevel;
             if (level < 0 || level >= numAspectRatios)
@@ -1213,7 +1213,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
             td->textStr = MString(buff);
             break;
         }
-        case 5:						//Maximum Distance
+        case 5:                     //Maximum Distance
             if (options.maximumDistance <= 0)
                 return false;
 
@@ -1224,7 +1224,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
             sprintf(buff, td->textStr.asChar(), maximumDist );
             td->textStr = MString(buff);
             break;
-        case 6:						//Projection Gate
+        case 6:                     //Projection Gate
         {
             if (!filmback.displayProjGate)
                 return false;
@@ -1238,7 +1238,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
             td->textStr = MString(buff);
             break;
         }
-        case 7:						//Show
+        case 7:                     //Show
         {
             if (td->textStr == "")
                 td->textStr = MString("%s");
@@ -1247,7 +1247,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
             td->textStr = MString(buff);
             break;
         }
-        case 8:						//Show
+        case 8:                     //Show
         {
             if (td->textStr == "")
                 td->textStr = MString("%s");
@@ -1256,7 +1256,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
             td->textStr = MString(buff);
             break;
         }
-        case 9:						//Show/Shot
+        case 9:                     //Show/Shot
         {
             if (td->textStr == "")
                 td->textStr = MString("%s/%s");
@@ -1265,7 +1265,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
             td->textStr = MString(buff);
             break;
         }
-        case 10:						//Frame Start
+        case 10:                        //Frame Start
         {
             if (td->textStr == "")
                 td->textStr = MString("%s");
@@ -1274,7 +1274,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
             td->textStr = MString(buff);
             break;
         }
-        case 11:						//Frame End
+        case 11:                        //Frame End
         {
             if (td->textStr == "")
                 td->textStr = MString("%s");
@@ -1283,7 +1283,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
             td->textStr = MString(buff);
             break;
         }
-        case 12:						//Frame Range
+        case 12:                        //Frame Range
         {
             if (td->textStr == "")
                 td->textStr = MString("%s-%s");
@@ -1292,7 +1292,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
             td->textStr = MString(buff);
             break;
         }
-        case 13:						//User
+        case 13:                        //User
         {
             if (td->textStr == "")
                 td->textStr = MString("%s");
@@ -1301,7 +1301,7 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
             td->textStr = MString(buff);
             break;
         }
-        case 14:						//Current File
+        case 14:                        //Current File
         {
             if (td->textStr == "")
                 td->textStr = MString("%s");
@@ -1310,47 +1310,47 @@ bool spReticleLoc::calcDynamicText(TextData *td, const int i)
             td->textStr = MString(buff);
             break;
         }
-        case 15:						//Path
+        case 15:                        //Path
         {
             if (td->textStr == "")
                 td->textStr = MString("%s");
 
             MFileObject fo;
-            fo.setFullName(MFileIO::currentFile());
-            sprintf(buff, td->textStr.asChar(), fo.path().asChar() );
+            fo.setRawFullName(MFileIO::currentFile());
+            sprintf(buff, td->textStr.asChar(), fo.resolvedPath().asChar() );
             td->textStr = MString(buff);
             break;
         }
-        case 16:						//Path
+        case 16:                        //Path
         {
             if (td->textStr == "")
                 td->textStr = MString("%s");
 
             MFileObject fo;
-            fo.setFullName(MFileIO::currentFile());
-            sprintf(buff, td->textStr.asChar(), fo.name().asChar() );
+            fo.setRawFullName(MFileIO::currentFile());
+            sprintf(buff, td->textStr.asChar(), fo.resolvedName().asChar() );
             td->textStr = MString(buff);
             break;
         }
-        case 17:						//Pan Scan Aspect Ratio
+        case 17:                        //Pan Scan Aspect Ratio
             if (td->textStr == "")
                 td->textStr = MString("%1.2f");
 
             sprintf(buff, td->textStr.asChar(), panScan.panScanRatio );
             td->textStr = MString(buff);
             break;
-        case 18:						//Pan Scan Offset
+        case 18:                        //Pan Scan Offset
             if (td->textStr == "")
                 td->textStr = MString("%1.2f");
 
             sprintf(buff, td->textStr.asChar(), panScan.panScanOffset );
             td->textStr = MString(buff);
             break;
-        case 19:						//Safe Action
+        case 19:                        //Safe Action
             if (td->textStr == "")
                 td->textStr = "safe action";
             break;
-        case 20:						//Safe Title
+        case 20:                        //Safe Title
             if (td->textStr == "")
                 td->textStr = "safe title";
             break;
@@ -1465,39 +1465,39 @@ bool spReticleLoc::calcTextPosition(TextData *td, const Geom &g, double &x, doub
 {
     switch (td->textPosRel)
     {
-        case 0:						//Bottom Left
+        case 0:                     //Bottom Left
             x = g.x1;
             y = g.y1;
             break;
-        case 1:						//Bottom Center
+        case 1:                     //Bottom Center
             x = (g.x1 + g.x2 ) / 2;
             y = g.y1;
             break;
-        case 2:						//Bottom Right
+        case 2:                     //Bottom Right
             x = g.x2;
             y = g.y1;
             break;
-        case 3:						//Middle Left
+        case 3:                     //Middle Left
             x = g.x1;
             y = (g.y1 + g.y2 ) / 2;
             break;
-        case 4:						//Center
+        case 4:                     //Center
             x = (g.x1 + g.x2 ) / 2;
             y = (g.y1 + g.y2 ) / 2;
             break;
-        case 5:						//Middle Right
+        case 5:                     //Middle Right
             x = g.x2;
             y = (g.y1 + g.y2 ) / 2;
             break;
-        case 6:						//Top Left
+        case 6:                     //Top Left
             x = g.x1;
             y = g.y2;
             break;
-        case 7:						//Top Center
+        case 7:                     //Top Center
             x = (g.x1 + g.x2 ) / 2;
             y = g.y2;
             break;
-        case 8:						//Top Right
+        case 8:                     //Top Right
             x = g.x2;
             y = g.y2;
             break;
@@ -1720,15 +1720,15 @@ bool spReticleLoc::prepForDraw(const MObject & node, const MDagPath & path, cons
         needRefresh = false;
     }
 
-	return true;
+    return true;
 }
 
 // This is the main function which draws the locator.
 //
 void spReticleLoc::drawBase(int width, int height, GPURenderer* renderer)
 {
-	portWidth = static_cast<double>(width);
-	portHeight = static_cast<double>(height);
+    portWidth = static_cast<double>(width);
+    portHeight = static_cast<double>(height);
 
     // Calculate the port geometry
     calcPortGeom();
@@ -2815,7 +2815,10 @@ MStatus spReticleLoc::initialize()
 // Viewport 2.0 override implementation
 //---------------------------------------------------------------------------
 
-#define ALWAYS_DIRTY false
+// Keep up with viewport and attribute changes
+// NOTE: This could potentially be avoided, as it does cost CPU time
+#define ALWAYS_DIRTY true
+
 spReticleLocDrawOverride::spReticleLocDrawOverride(const MObject& obj) : MHWRender::MPxDrawOverride(obj, nullptr, ALWAYS_DIRTY)
 {
 }
